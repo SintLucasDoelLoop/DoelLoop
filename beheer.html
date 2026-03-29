@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sint Lucas Doelloop — Beheer</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@300;400;600;700;800&display=swap');
+
+:root {
+  --rood: #c0392b; --rood-dark: #922b21; --rood-light: #e74c3c;
+  --goud: #f0a500; --goud-light: #f7c948;
+  --wit: #ffffff; --lichtgrijs: #f4f1ed; --grijs: #a09890;
+  --donker: #1c1a18; --donker2: #252220; --tekst: #2e2a26;
+  --success: #27ae60; --warning: #e67e22; --rand: #e0d8d0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { font-family: 'Nunito', sans-serif; background: var(--lichtgrijs); color: var(--tekst); min-height: 100vh; }
+
+/* LOGIN */
+.login-scherm {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--donker);
+  padding: 2rem;
+}
+
+.login-kaart {
+  background: var(--donker2);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 1.2rem;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.login-logo {
+  width: 64px; height: 64px;
+  background: var(--rood);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 1.2rem;
+  box-shadow: 0 0 0 6px rgba(192,57,43,0.2);
+}
+
+.login-kaart h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: white;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3rem;
+}
+
+.login-kaart p { color: var(--grijs); font-size: 0.85rem; margin-bottom: 2rem; }
+
+.login-label { display: block; text-align: left; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.4rem; }
+
+.login-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 0.6rem;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  margin-bottom: 1.2rem;
+  transition: border-color 0.2s;
+}
+
+.login-input:focus { border-color: var(--rood); }
+.login-input::placeholder { color: rgba(255,255,255,0.2); }
+
+.login-fout { color: #e88a80; font-size: 0.82rem; font-weight: 700; margin-bottom: 1rem; display: none; }
+
+.login-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: var(--rood);
+  border: none;
+  border-radius: 0.6rem;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.login-btn:hover { background: var(--rood-dark); }
+
+.login-hint {
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.2);
+  line-height: 1.6;
+}
+
+/* BEHEER APP */
+.beheer-app { display: none; }
+.beheer-app.toon { display: block; }
+
+.beheer-header {
+  background: var(--donker);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.beheer-header-links { display: flex; align-items: center; gap: 0.8rem; }
+
+.beheer-logo {
+  width: 36px; height: 36px;
+  background: var(--rood);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.beheer-header h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: white;
+  letter-spacing: 0.08em;
+}
+
+.beheer-header h1 span { color: var(--goud); }
+
+.uitlog-btn {
+  padding: 0.4rem 0.9rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 0.4rem;
+  color: var(--grijs);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.uitlog-btn:hover { color: white; background: rgba(255,255,255,0.12); }
+
+/* TABS */
+.tab-balk {
+  background: var(--donker2);
+  border-bottom: 2px solid var(--rood);
+  display: flex;
+  padding: 0 1rem;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 0.85rem 1.2rem;
+  background: transparent;
+  border: none;
+  color: var(--grijs);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.tab:hover { color: var(--wit); }
+.tab.actief { color: var(--goud); border-bottom-color: var(--goud); }
+
+/* PANELEN */
+.paneel { display: none; }
+.paneel.actief { display: block; }
+
+/* MAIN */
+.beheer-main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+/* KAARTEN */
+.kaart { background: var(--wit); border-radius: 1rem; box-shadow: 0 2px 16px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--rand); }
+.kaart-kop { background: var(--donker); padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.6rem; }
+.kaart-kop h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; color: white; letter-spacing: 0.08em; }
+.kaart-body { padding: 1.5rem; }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+@media (max-width: 700px) { .stats { grid-template-columns: repeat(3,1fr); } }
+
+.stat {
+  background: var(--wit);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid var(--rand);
+  border-top: 3px solid var(--rood);
+}
+
+.stat.groen { border-top-color: var(--success); }
+.stat.goud { border-top-color: var(--goud); }
+
+.stat-n { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--rood); line-height: 1; }
+.stat.groen .stat-n { color: var(--success); }
+.stat.goud .stat-n { color: var(--warning); }
+.stat-l { font-size: 0.67rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grijs); margin-top: 0.2rem; }
+
+/* TABEL */
+.tabel-controls { display: flex; gap: 0.75rem; margin-bottom: 1.2rem; flex-wrap: wrap; align-items: center; }
+.zoek { flex:1; min-width:180px; padding: 0.6rem 0.9rem; border: 1.5px solid var(--rand); border-radius: 0.5rem; font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:600; background:var(--wit); outline:none; }
+.zoek:focus { border-color: var(--rood); }
+.filter { padding: 0.6rem 0.9rem; border: 1.5px solid var(--rand); border-radius: 0.5rem; font-family:'Nunito',sans-serif; font-size:0.82rem; font-weight:700; background:var(--wit); color:var(--tekst); outline:none; cursor:pointer; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+th { background: var(--donker); color: var(--grijs); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.75rem 0.9rem; text-align: left; white-space: nowrap; }
+td { padding: 0.75rem 0.9rem; border-bottom: 1px solid var(--rand); vertical-align: middle; }
+tr:hover td { background: #fdf8f5; }
+
+.startnr-veld { width: 65px; padding: 0.3rem 0.4rem; border: 1.5px solid var(--rand); border-radius: 0.4rem; font-family:'Bebas Neue',sans-serif; font-size:1.1rem; text-align:center; background:var(--lichtgrijs); color:var(--rood); outline:none; }
+.startnr-veld:focus { border-color: var(--rood); background:white; }
+
+.badge { display:inline-block; padding: 0.2rem 0.6rem; border-radius: 0.4rem; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; }
+.badge-5 { background:#e8f8ef; color:#1a7a3c; }
+.badge-15 { background:#e8f0ff; color:#2c5ac7; }
+.badge-40 { background:#fff3e0; color:#b35c00; }
+.badge-80 { background:#fde8e8; color:var(--rood-dark); }
+
+.chip { display:inline-flex; align-items:center; gap:0.25rem; font-size:0.72rem; font-weight:800; padding:0.2rem 0.6rem; border-radius:1rem; }
+.chip-betaald { background:#e6f9ee; color:var(--success); }
+.chip-open { background:#fff4e0; color:var(--warning); }
+.chip-in { background:#fde8e8; color:var(--rood); }
+
+.actie { padding: 0.25rem 0.55rem; border:none; border-radius:0.35rem; font-family:'Nunito',sans-serif; font-size:0.72rem; font-weight:800; cursor:pointer; transition:all 0.15s; }
+.actie-ok { background:#e6f9ee; color:var(--success); }
+.actie-ok:hover { background:var(--success); color:white; }
+.actie-rood { background:#fde8e8; color:var(--rood); }
+.actie-rood:hover { background:var(--rood); color:white; }
+.actie-grijs { background:var(--lichtgrijs); color:var(--grijs); border:1px solid var(--rand); }
+.actie-grijs:hover { background:var(--rand); }
+
+.leeg { text-align:center; padding:3rem; color:var(--grijs); font-size:0.9rem; }
+
+/* SCANNER */
+.scan-vak {
+  background: var(--donker);
+  border-radius: 1rem;
+  padding: 2.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-vak::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(192,57,43,0.04) 30px, rgba(192,57,43,0.04) 60px);
+}
+
+.scan-icoon { font-size: 3rem; position:relative; z-index:1; margin-bottom: 0.8rem; }
+.scan-vak > p { color: var(--grijs); font-size: 0.88rem; margin-bottom: 1.2rem; position:relative; z-index:1; }
+
+.scan-rij { display:flex; gap:0.75rem; max-width:400px; margin: 0 auto; position:relative; z-index:1; }
+.scan-veld {
+  flex:1; padding: 0.85rem 1rem;
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 0.5rem;
+  color: white;
+  font-family: monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  outline: none;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.scan-veld::placeholder { color: rgba(255,255,255,0.25); font-family:'Nunito',sans-serif; font-weight:400; letter-spacing:0; text-transform:none; }
+.scan-veld:focus { border-color: var(--goud); }
+
+.scan-resultaat { border-radius: 0.75rem; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; display:none; border-left: 4px solid; }
+.scan-resultaat.ok { display:block; background:#e6f9ee; border-color:var(--success); }
+.scan-resultaat.fout { display:block; background:#fde8e8; border-color:var(--rood); }
+.scan-resultaat.waarsch { display:block; background:#fffbe8; border-color:var(--goud); }
+.scan-resultaat-titel { font-size:1rem; font-weight:800; margin-bottom:0.25rem; }
+.scan-resultaat.ok .scan-resultaat-titel { color:var(--success); }
+.scan-resultaat.fout .scan-resultaat-titel { color:var(--rood); }
+.scan-resultaat.waarsch .scan-resultaat-titel { color:var(--warning); }
+.scan-resultaat-detail { font-size:0.85rem; color:var(--tekst); font-weight:600; }
+
+/* FORM */
+.form-rij { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+@media (max-width:560px) { .form-rij { grid-template-columns:1fr; } }
+.form-groep { display:flex; flex-direction:column; gap:0.35rem; }
+.form-groep.vol { grid-column: 1/-1; }
+label { font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--rood-dark); }
+input[type=text], input[type=email], input[type=date], input[type=time], input[type=url], input[type=password] {
+  background:var(--lichtgrijs); border:1.5px solid var(--rand); border-radius:0.5rem;
+  padding:0.65rem 0.9rem; color:var(--tekst); font-family:'Nunito',sans-serif;
+  font-size:0.9rem; font-weight:600; outline:none; width:100%; transition:border-color 0.2s;
+}
+input:focus { border-color:var(--rood); box-shadow:0 0 0 3px rgba(192,57,43,0.1); }
+input::placeholder { color:#bbb; font-weight:400; }
+
+/* KNOPPEN */
+.knop { display:inline-flex; align-items:center; gap:0.4rem; padding:0.75rem 1.4rem; border:none; border-radius:0.5rem; font-family:'Nunito',sans-serif; font-size:0.85rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; text-decoration:none; }
+.knop-rood { background:var(--rood); color:white; box-shadow:0 2px 10px rgba(192,57,43,0.25); }
+.knop-rood:hover { background:var(--rood-dark); }
+.knop-grijs { background:var(--lichtgrijs); color:var(--tekst); border:1.5px solid var(--rand); }
+.knop-grijs:hover { background:var(--rand); }
+.knop-gevaar { background:#fde8e8; color:var(--rood-dark); }
+.knop-gevaar:hover { background:var(--rood); color:white; }
+.knop-rij { display:flex; gap:0.75rem; flex-wrap:wrap; }
+
+/* TOAST */
+.toast { position:fixed; bottom:1.5rem; right:1.5rem; background:var(--donker); color:white; padding:0.85rem 1.3rem; border-radius:0.75rem; font-size:0.88rem; font-weight:700; box-shadow:0 6px 24px rgba(0,0,0,0.2); transform:translateY(80px); opacity:0; transition:all 0.3s; z-index:9999; max-width:300px; border-left:3px solid var(--goud); }
+.toast.toon { transform:translateY(0); opacity:1; }
+
+/* Wachtwoord wijzigen sectie */
+.ww-sectie { background:#fffbe8; border:1.5px solid #fde9a0; border-radius:0.75rem; padding:1.2rem 1.4rem; margin-bottom:1.5rem; }
+.ww-sectie h3 { font-size:0.85rem; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--warning); margin-bottom:0.8rem; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-scherm" id="login-scherm">
+  <div class="login-kaart">
+    <div class="login-logo">🏃</div>
+    <h1>Sint Lucas Doelloop</h1>
+    <p>Organisatie — Beheerpaneel</p>
+    <label class="login-label" for="ww-veld">Wachtwoord</label>
+    <input class="login-input" type="password" id="ww-veld" placeholder="••••••••" onkeydown="if(event.key==='Enter') login()">
+    <div class="login-fout" id="login-fout">Ongeldig wachtwoord. Probeer opnieuw.</div>
+    <button class="login-btn" onclick="login()">Inloggen →</button>
+    <div class="login-hint">
+      Standaardwachtwoord: <strong style="color:rgba(255,255,255,0.5);">doelloop2025</strong><br>
+      Wijzig dit direct na eerste gebruik in Instellingen.
+    </div>
+  </div>
+</div>
+
+<!-- BEHEER APP -->
+<div class="beheer-app" id="beheer-app">
+
+  <div class="beheer-header">
+    <div class="beheer-header-links">
+      <div class="beheer-logo">🏃</div>
+      <h1>Sint Lucas <span>Doelloop</span> — Beheer</h1>
+    </div>
+    <div style="display:flex; gap:0.5rem; align-items:center;">
+      <a href="index.html" class="uitlog-btn" target="_blank">🔗 Inschrijfpagina</a>
+      <button class="uitlog-btn" onclick="uitloggen()">Uitloggen</button>
+    </div>
+  </div>
+
+  <nav class="tab-balk">
+    <button class="tab actief" onclick="wissel('overzicht', this)">📋 Overzicht</button>
+    <button class="tab" onclick="wissel('checkin', this)">📷 Check-in</button>
+    <button class="tab" onclick="wissel('instellingen', this)">⚙️ Instellingen</button>
+  </nav>
+
+  <div class="beheer-main">
+
+    <!-- ===== OVERZICHT ===== -->
+    <div class="paneel actief" id="paneel-overzicht">
+      <div class="stats" id="stats"></div>
+
+      <div class="kaart">
+        <div class="kaart-kop"><span>📋</span><h2>Alle inschrijvingen</h2></div>
+        <div class="kaart-body" style="padding-bottom:0.5rem;">
+          <div class="tabel-controls">
+            <input class="zoek" id="zoek" placeholder="🔍 Naam, e-mail of ticket-ID..." oninput="renderTabel()">
+            <select class="filter" id="f-afstand" onchange="renderTabel()">
+              <option value="">Alle afstanden</option>
+              <option value="5">5 km</option>
+              <option value="15">15 km</option>
+              <option value="40">40 km</option>
+              <option value="80">80 km</option>
+            </select>
+            <select class="filter" id="f-betaal" onchange="renderTabel()">
+              <option value="">Alle statussen</option>
+              <option value="betaald">Betaald</option>
+              <option value="open">Openstaand</option>
+            </select>
+            <div style="margin-left:auto; display:flex; gap:0.5rem;">
+              <button class="knop knop-grijs" onclick="exportCSV()" style="font-size:0.75rem; padding:0.5rem 0.8rem;">⬇ CSV</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Startnr.</th>
+                  <th>Naam</th>
+                  <th>Afstand</th>
+                  <th>E-mail</th>
+                  <th>Betaling</th>
+                  <th>Check-in</th>
+                  <th>Ticket ID</th>
+                  <th>Acties</th>
+                </tr>
+              </thead>
+              <tbody id="tabel-body"></tbody>
+            </table>
+          </div>
+          <div class="leeg" id="tabel-leeg" style="display:none;">Geen inschrijvingen gevonden.</div>
+          <div style="padding:0.8rem 0; font-size:0.78rem; color:var(--grijs);" id="tabel-voet"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CHECK-IN ===== -->
+    <div class="paneel" id="paneel-checkin">
+      <div class="scan-vak">
+        <div class="scan-icoon">📷</div>
+        <p>Scan de QR-code of voer het ticket-ID in (bijv. SLD-A3F2)</p>
+        <div class="scan-rij">
+          <input class="scan-veld" id="scan-veld" placeholder="Ticket-ID invoeren..." onkeydown="if(event.key==='Enter') doScan()">
+          <button class="knop knop-rood" onclick="doScan()">✓ Check-in</button>
+        </div>
+      </div>
+
+      <div class="scan-resultaat" id="scan-res"></div>
+
+      <div class="kaart">
+        <div class="kaart-kop"><span>📊</span><h2>Check-in per afstand</h2></div>
+        <div class="kaart-body">
+          <div id="ci-stats" style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem;"></div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Naam</th><th>Afstand</th><th>Startnr.</th><th>Betaling</th><th>Status</th><th>Actie</th></tr></thead>
+              <tbody id="ci-tabel"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== INSTELLINGEN ===== -->
+    <div class="paneel" id="paneel-instellingen">
+
+      <div class="kaart">
+        <div class="kaart-kop"><span>🏁</span><h2>Evenement</h2></div>
+        <div class="kaart-body">
+          <div class="form-rij">
+            <div class="form-groep">
+              <label>Naam evenement</label>
+              <input type="text" id="cfg-naam" placeholder="Sint Lucas Doelloop" oninput="saveCfg()">
+            </div>
+            <div class="form-groep">
+              <label>Datum</label>
+              <input type="date" id="cfg-datum" oninput="saveCfg()">
+            </div>
+            <div class="form-groep">
+              <label>Locatie</label>
+              <input type="text" id="cfg-locatie" placeholder="bijv. Eindhoven" oninput="saveCfg()">
+            </div>
+            <div class="form-groep">
+              <label>Starttijd</label>
+              <input type="time" id="cfg-starttijd" value="09:00" oninput="saveCfg()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kaart">
+        <div class="kaart-kop"><span>💳</span><h2>Tikkie-links</h2></div>
+        <div class="kaart-body">
+          <p style="font-size:0.82rem; color:var(--grijs); margin-bottom:1.2rem; line-height:1.7;">
+            Maak in de <strong>Tikkie-app</strong> vier vaste betaalverzoeken aan (één per afstand) en plak de links hier.
+            Kies in de app "Vaste Tikkie" zodat meerdere mensen dezelfde link kunnen gebruiken.
+          </p>
+          <div class="form-rij">
+            <div class="form-groep">
+              <label>5 km — € 5,—</label>
+              <input type="url" id="cfg-t5" placeholder="https://tikkie.me/pay/..." oninput="saveCfg()">
+            </div>
+            <div class="form-groep">
+              <label>15 km — € 10,—</label>
+              <input type="url" id="cfg-t15" placeholder="https://tikkie.me/pay/..." oninput="saveCfg()">
+            </div>
+            <div class="form-groep">
+              <label>40 km — € 25,—</label>
+              <input type="url" id="cfg-t40" placeholder="https://tikkie.me/pay/..." oninput="saveCfg()">
+            </div>
+            <div class="form-groep">
+              <label>80 km — € 40,—</label>
+              <input type="url" id="cfg-t80" placeholder="https://tikkie.me/pay/..." oninput="saveCfg()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kaart">
+        <div class="kaart-kop"><span>📧</span><h2>EmailJS — E-mailbevestigingen</h2></div>
+        <div class="kaart-body">
+          <p style="font-size:0.82rem; color:var(--grijs); margin-bottom:1.2rem; line-height:1.7;">
+            1. Maak een gratis account op <strong>emailjs.com</strong><br>
+            2. Voeg een e-mailservice toe (Gmail werkt prima)<br>
+            3. Maak een template met: <code style="background:#f4f1ed; padding:0.1rem 0.4rem; border-radius:0.3rem;">{{voornaam}}</code> <code style="background:#f4f1ed; padding:0.1rem 0.4rem; border-radius:0.3rem;">{{ticket_id}}</code> <code style="background:#f4f1ed; padding:0.1rem 0.4rem; border-radius:0.3rem;">{{afstand}}</code> <code style="background:#f4f1ed; padding:0.1rem 0.4rem; border-radius:0.3rem;">{{prijs}}</code> <code style="background:#f4f1ed; padding:0.1rem 0.4rem; border-radius:0.3rem;">{{tikkie_link}}</code> <code style="background:#f4f1ed; padding:0.1rem 0.4rem; border-radius:0.3rem;">{{datum}}</code> <code style="background:#f4f1ed; padding:0.1rem 0.4rem; border-radius:0.3rem;">{{locatie}}</code>
+          </p>
+          <div class="form-rij">
+            <div class="form-groep">
+              <label>Public Key</label>
+              <input type="text" id="cfg-ejskey" placeholder="user_XXXXXXXXXXXXXXX" oninput="saveCfg()">
+            </div>
+            <div class="form-groep">
+              <label>Service ID</label>
+              <input type="text" id="cfg-ejssvc" placeholder="service_xxxxxxx" oninput="saveCfg()">
+            </div>
+            <div class="form-groep">
+              <label>Template ID</label>
+              <input type="text" id="cfg-ejstpl" placeholder="template_xxxxxxx" oninput="saveCfg()">
+            </div>
+            <div class="form-groep">
+              <label>Organisatie e-mailadres</label>
+              <input type="email" id="cfg-orgemail" placeholder="sintlucasdoelloop@..." oninput="saveCfg()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kaart">
+        <div class="kaart-kop"><span>🔒</span><h2>Beveiliging</h2></div>
+        <div class="kaart-body">
+          <div class="ww-sectie">
+            <h3>Wachtwoord wijzigen</h3>
+            <div class="form-rij" style="max-width:500px;">
+              <div class="form-groep">
+                <label>Nieuw wachtwoord</label>
+                <input type="password" id="ww-nieuw" placeholder="minimaal 8 tekens">
+              </div>
+              <div class="form-groep">
+                <label>Bevestig wachtwoord</label>
+                <input type="password" id="ww-bevestig" placeholder="herhaal wachtwoord">
+              </div>
+            </div>
+            <button class="knop knop-rood" onclick="wijzigWachtwoord()" style="margin-top:0.5rem;">🔒 Wachtwoord opslaan</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="kaart">
+        <div class="kaart-kop"><span>💾</span><h2>Data</h2></div>
+        <div class="kaart-body">
+          <div class="knop-rij">
+            <button class="knop knop-grijs" onclick="exportCSV()">⬇ Exporteer CSV</button>
+            <button class="knop knop-grijs" onclick="exportJSON()">⬇ Exporteer JSON</button>
+            <button class="knop knop-gevaar" onclick="verwijderAlles()">🗑️ Verwijder alle data</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /beheer-main -->
+</div><!-- /beheer-app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== AUTH =====
+const STANDAARD_WW = 'doelloop2025';
+function getWW() { return localStorage.getItem('sld_ww') || STANDAARD_WW; }
+
+function login() {
+  const input = document.getElementById('ww-veld').value;
+  if (input === getWW()) {
+    document.getElementById('login-scherm').style.display = 'none';
+    document.getElementById('beheer-app').classList.add('toon');
+    laadCfg();
+    renderTabel();
+  } else {
+    document.getElementById('login-fout').style.display = 'block';
+    document.getElementById('ww-veld').value = '';
+    document.getElementById('ww-veld').focus();
+  }
+}
+
+function uitloggen() {
+  document.getElementById('beheer-app').classList.remove('toon');
+  document.getElementById('login-scherm').style.display = 'flex';
+  document.getElementById('ww-veld').value = '';
+  document.getElementById('login-fout').style.display = 'none';
+}
+
+function wijzigWachtwoord() {
+  const n = document.getElementById('ww-nieuw').value;
+  const b = document.getElementById('ww-bevestig').value;
+  if (n.length < 8) { toast('⚠️ Wachtwoord moet minimaal 8 tekens zijn'); return; }
+  if (n !== b) { toast('⚠️ Wachtwoorden komen niet overeen'); return; }
+  localStorage.setItem('sld_ww', n);
+  document.getElementById('ww-nieuw').value = '';
+  document.getElementById('ww-bevestig').value = '';
+  toast('✓ Wachtwoord gewijzigd');
+}
+
+// ===== DATA =====
+function getData() { return JSON.parse(localStorage.getItem('sld_inschrijvingen') || '[]'); }
+function slaData(d) { localStorage.setItem('sld_inschrijvingen', JSON.stringify(d)); }
+function getCfg() { return JSON.parse(localStorage.getItem('sld_cfg') || '{}'); }
+
+function saveCfg() {
+  const cfg = {
+    evenementNaam: document.getElementById('cfg-naam').value,
+    datum: document.getElementById('cfg-datum').value,
+    locatie: document.getElementById('cfg-locatie').value,
+    starttijd: document.getElementById('cfg-starttijd').value,
+    tikkie5: document.getElementById('cfg-t5').value,
+    tikkie15: document.getElementById('cfg-t15').value,
+    tikkie40: document.getElementById('cfg-t40').value,
+    tikkie80: document.getElementById('cfg-t80').value,
+    ejsKey: document.getElementById('cfg-ejskey').value,
+    ejsService: document.getElementById('cfg-ejssvc').value,
+    ejsTemplate: document.getElementById('cfg-ejstpl').value,
+    orgEmail: document.getElementById('cfg-orgemail').value
+  };
+  localStorage.setItem('sld_cfg', JSON.stringify(cfg));
+}
+
+function laadCfg() {
+  const c = getCfg();
+  const set = (id, val) => { if (val && document.getElementById(id)) document.getElementById(id).value = val; };
+  set('cfg-naam', c.evenementNaam);
+  set('cfg-datum', c.datum);
+  set('cfg-locatie', c.locatie);
+  set('cfg-starttijd', c.starttijd);
+  set('cfg-t5', c.tikkie5);
+  set('cfg-t15', c.tikkie15);
+  set('cfg-t40', c.tikkie40);
+  set('cfg-t80', c.tikkie80);
+  set('cfg-ejskey', c.ejsKey);
+  set('cfg-ejssvc', c.ejsService);
+  set('cfg-ejstpl', c.ejsTemplate);
+  set('cfg-orgemail', c.orgEmail);
+}
+
+// ===== TABS =====
+function wissel(naam, knop) {
+  document.querySelectorAll('.paneel').forEach(p => p.classList.remove('actief'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('actief'));
+  document.getElementById('paneel-' + naam).classList.add('actief');
+  knop.classList.add('actief');
+  if (naam === 'overzicht') renderTabel();
+  if (naam === 'checkin') renderCheckin();
+}
+
+// ===== STATS =====
+function renderStats() {
+  const d = getData();
+  const totaal = d.length;
+  const betaald = d.filter(x=>x.betaald).length;
+  const ci = d.filter(x=>x.checkedin).length;
+  const omzet = d.filter(x=>x.betaald).reduce((s,x)=>s+x.prijs,0);
+  const per = ['5','15','40','80'].map(a=>d.filter(x=>x.afstand===a).length).join('/');
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="stat-n">${totaal}</div><div class="stat-l">Ingeschreven</div></div>
+    <div class="stat groen"><div class="stat-n">${betaald}</div><div class="stat-l">Betaald</div></div>
+    <div class="stat goud"><div class="stat-n">€${omzet}</div><div class="stat-l">Omzet</div></div>
+    <div class="stat"><div class="stat-n">${ci}</div><div class="stat-l">Ingecheckt</div></div>
+    <div class="stat"><div class="stat-n">${per}</div><div class="stat-l">5/15/40/80 km</div></div>
+  `;
+}
+
+// ===== TABEL =====
+function renderTabel() {
+  renderStats();
+  const d = getData();
+  const zoek = (document.getElementById('zoek')?.value || '').toLowerCase();
+  const fa = document.getElementById('f-afstand')?.value || '';
+  const fb = document.getElementById('f-betaal')?.value || '';
+
+  const f = d.filter(x => {
+    const naam = (x.voornaam+' '+x.achternaam).toLowerCase();
+    return (!zoek || naam.includes(zoek) || x.email.toLowerCase().includes(zoek) || x.id.toLowerCase().includes(zoek))
+      && (!fa || x.afstand === fa)
+      && (!fb || (fb==='betaald' ? x.betaald : !x.betaald));
+  });
+
+  const tb = document.getElementById('tabel-body');
+  const leeg = document.getElementById('tabel-leeg');
+  document.getElementById('tabel-voet').textContent = f.length + ' van ' + d.length + ' deelnemers';
+
+  if (!f.length) { tb.innerHTML=''; leeg.style.display='block'; return; }
+  leeg.style.display='none';
+
+  tb.innerHTML = f.map(x => `
+    <tr>
+      <td><input class="startnr-veld" value="${x.startnr||''}" placeholder="—" onchange="slaStartnr('${x.id}',this.value)"></td>
+      <td><strong>${x.voornaam} ${x.achternaam}</strong><br><span style="font-size:0.75rem;color:var(--grijs)">${x.datum||''}</span></td>
+      <td><span class="badge badge-${x.afstand}">${x.afstand} km</span></td>
+      <td style="font-size:0.8rem;">${x.email}</td>
+      <td>
+        <span class="chip ${x.betaald?'chip-betaald':'chip-open'}">${x.betaald?'✓ Betaald':'⏳ Open'}</span>
+        ${!x.betaald && x.tikkieLink ? `<br><a href="${x.tikkieLink}" target="_blank" style="font-size:0.7rem;color:var(--goud);font-weight:700;">Tikkie →</a>` : ''}
+      </td>
+      <td><span class="chip ${x.checkedin?'chip-in':'chip-open'}">${x.checkedin?'✓ In':'–'}</span></td>
+      <td style="font-family:monospace;font-size:0.78rem;">${x.id}</td>
+      <td>
+        <div style="display:flex;gap:0.3rem;flex-wrap:wrap;">
+          ${!x.betaald?`<button class="actie actie-ok" onclick="markBetaald('${x.id}')">€</button>`:''}
+          ${!x.checkedin?`<button class="actie actie-rood" onclick="markCheckin('${x.id}')">↩</button>`:''}
+          <button class="actie actie-grijs" onclick="verwijder('${x.id}')">✕</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function slaStartnr(id, val) {
+  const d = getData();
+  const x = d.find(i=>i.id===id);
+  if (x) { x.startnr=val; slaData(d); toast('Startnummer opgeslagen'); }
+}
+
+function markBetaald(id) {
+  const d = getData();
+  const x = d.find(i=>i.id===id);
+  if (x) { x.betaald=true; slaData(d); renderTabel(); toast('✓ Betaling geregistreerd'); }
+}
+
+function markCheckin(id) {
+  const d = getData();
+  const x = d.find(i=>i.id===id);
+  if (x) { x.checkedin=true; slaData(d); renderTabel(); renderCheckin(); toast('✓ Ingecheckt: '+x.voornaam); }
+}
+
+function verwijder(id) {
+  if (!confirm('Deelnemer verwijderen?')) return;
+  slaData(getData().filter(x=>x.id!==id));
+  renderTabel(); toast('Verwijderd');
+}
+
+// ===== CHECK-IN =====
+function doScan() {
+  const inp = document.getElementById('scan-veld').value.trim().toUpperCase();
+  const res = document.getElementById('scan-res');
+  if (!inp) return;
+
+  const d = getData();
+  const x = d.find(i=>i.id===inp);
+
+  if (!x) {
+    res.className='scan-resultaat fout';
+    res.innerHTML=`<div class="scan-resultaat-titel">✗ Niet gevonden</div><div class="scan-resultaat-detail">Ticket "${inp}" bestaat niet.</div>`;
+    return;
+  }
+  if (x.checkedin) {
+    res.className='scan-resultaat waarsch';
+    res.innerHTML=`<div class="scan-resultaat-titel">⚠️ Al ingecheckt</div><div class="scan-resultaat-detail">${x.voornaam} ${x.achternaam} — controleer dit ticket.</div>`;
+    return;
+  }
+  if (!x.betaald) {
+    res.className='scan-resultaat waarsch';
+    res.innerHTML=`<div class="scan-resultaat-titel">⚠️ Betaling openstaand</div>
+      <div class="scan-resultaat-detail">${x.voornaam} ${x.achternaam} · ${x.afstand} km · Betaling niet ontvangen.
+      <br><button class="knop knop-rood" style="margin-top:0.6rem;font-size:0.78rem;padding:0.4rem 0.7rem;" onclick="forceerCheckin('${x.id}')">Toch inchecken</button></div>`;
+    return;
+  }
+
+  x.checkedin=true; slaData(d);
+  res.className='scan-resultaat ok';
+  res.innerHTML=`<div class="scan-resultaat-titel">✓ Welkom, ${x.voornaam}!</div>
+    <div class="scan-resultaat-detail">${x.voornaam} ${x.achternaam} · ${x.afstand} km · Betaald ✓${x.startnr?' · Startnr. <strong>'+x.startnr+'</strong>':''}</div>`;
+  document.getElementById('scan-veld').value='';
+  renderCheckin(); toast('✓ '+x.voornaam+' '+x.achternaam+' ingecheckt');
+}
+
+function forceerCheckin(id) {
+  const d = getData();
+  const x = d.find(i=>i.id===id);
+  if (x) { x.checkedin=true; slaData(d); doScan(); renderCheckin(); }
+}
+
+function renderCheckin() {
+  const d = getData();
+  document.getElementById('ci-stats').innerHTML = ['5','15','40','80'].map(a => {
+    const tot = d.filter(x=>x.afstand===a).length;
+    const ci = d.filter(x=>x.afstand===a&&x.checkedin).length;
+    return `<div class="stat"><div class="stat-n" style="color:var(--rood);">${ci}<span style="font-size:0.9rem;color:var(--grijs);">/${tot}</span></div><div class="stat-l">${a} km</div></div>`;
+  }).join('');
+
+  document.getElementById('ci-tabel').innerHTML = d.map(x=>`
+    <tr>
+      <td><strong>${x.voornaam} ${x.achternaam}</strong></td>
+      <td><span class="badge badge-${x.afstand}">${x.afstand} km</span></td>
+      <td style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--rood);">${x.startnr||'—'}</td>
+      <td><span class="chip ${x.betaald?'chip-betaald':'chip-open'}">${x.betaald?'✓':'Open'}</span></td>
+      <td><span class="chip ${x.checkedin?'chip-in':'chip-open'}">${x.checkedin?'✓ In':'Verwacht'}</span></td>
+      <td>${!x.checkedin?`<button class="actie actie-rood" onclick="markCheckin('${x.id}'); renderCheckin();">↩</button>`:'—'}</td>
+    </tr>
+  `).join('');
+}
+
+// ===== EXPORT =====
+function exportCSV() {
+  const d = getData();
+  const h = ['ID','Voornaam','Achternaam','Email','Telefoon','Afstand','Prijs','Betaald','Startnummer','Check-in','Datum'];
+  const r = d.map(x=>[x.id,x.voornaam,x.achternaam,x.email,x.telefoon||'',x.afstand+' km','€'+x.prijs,x.betaald?'Ja':'Nee',x.startnr||'',x.checkedin?'Ja':'Nee',x.datum||'']);
+  const csv = [h,...r].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  dl('sintlucas-doelloop.csv', csv, 'text/csv');
+  toast('✓ CSV geëxporteerd');
+}
+
+function exportJSON() {
+  dl('sintlucas-doelloop.json', JSON.stringify(getData(),null,2), 'application/json');
+  toast('✓ JSON geëxporteerd');
+}
+
+function dl(naam, inhoud, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([inhoud],{type}));
+  a.download = naam; a.click();
+}
+
+function verwijderAlles() {
+  if (!confirm('Alle inschrijvingen definitief verwijderen?')) return;
+  slaData([]); renderTabel(); toast('Alle data verwijderd');
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('toon');
+  setTimeout(()=>el.classList.remove('toon'), 3000);
+}
+</script>
+</body>
+</html>

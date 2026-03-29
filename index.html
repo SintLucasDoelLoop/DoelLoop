@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sint Lucas Doelloop — Inschrijven</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@300;400;600;700;800&display=swap');
+
+:root {
+  --rood: #c0392b;
+  --rood-dark: #922b21;
+  --rood-light: #e74c3c;
+  --goud: #f0a500;
+  --goud-light: #f7c948;
+  --wit: #ffffff;
+  --lichtgrijs: #f4f1ed;
+  --grijs: #a09890;
+  --donker: #1c1a18;
+  --tekst: #2e2a26;
+  --success: #27ae60;
+  --warning: #e67e22;
+  --rand: #e0d8d0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--lichtgrijs);
+  color: var(--tekst);
+  min-height: 100vh;
+}
+
+/* HERO */
+.hero {
+  background: var(--donker);
+  position: relative;
+  overflow: hidden;
+  padding: 3.5rem 1.5rem 3rem;
+  text-align: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(192,57,43,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(240,165,0,0.08) 0%, transparent 50%),
+    repeating-linear-gradient(-55deg, transparent, transparent 25px, rgba(255,255,255,0.015) 25px, rgba(255,255,255,0.015) 26px);
+  pointer-events: none;
+}
+
+.hero-inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(192,57,43,0.2);
+  border: 1px solid rgba(192,57,43,0.4);
+  color: #e88a80;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.35rem 1rem;
+  border-radius: 2rem;
+  margin-bottom: 1.2rem;
+}
+
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  color: var(--wit);
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.hero h1 span { color: var(--goud); }
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.hero-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.6);
+  font-weight: 600;
+}
+
+.hero-meta-item strong { color: rgba(255,255,255,0.9); }
+
+/* AFSTANDEN OVERZICHT */
+.distances-bar {
+  background: var(--rood);
+  padding: 0.9rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.dist-item {
+  text-align: center;
+  color: white;
+}
+
+.dist-km {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+
+.dist-prijs {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0.8;
+}
+
+/* MAIN LAYOUT */
+.page-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+}
+
+/* STAPPEN */
+.stap-indicator {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 0;
+}
+
+.stap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grijs);
+  flex: 1;
+}
+
+.stap.actief { color: var(--rood); }
+.stap.klaar { color: var(--success); }
+
+.stap-nr {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--rand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  color: var(--grijs);
+}
+
+.stap.actief .stap-nr { background: var(--rood); color: white; }
+.stap.klaar .stap-nr { background: var(--success); color: white; }
+
+.stap-lijn { flex: 1; height: 2px; background: var(--rand); max-width: 40px; }
+.stap-lijn.klaar { background: var(--success); }
+
+/* KAART */
+.kaart {
+  background: var(--wit);
+  border-radius: 1rem;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.07);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--rand);
+}
+
+.kaart-kop {
+  background: var(--donker);
+  padding: 1.1rem 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.kaart-kop h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  color: white;
+  letter-spacing: 0.08em;
+}
+
+.kaart-kop .stap-lbl {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--grijs);
+  background: rgba(255,255,255,0.07);
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+}
+
+.kaart-body { padding: 1.6rem; }
+
+/* FORM */
+.form-rij {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 520px) { .form-rij { grid-template-columns: 1fr; } }
+
+.form-groep { display: flex; flex-direction: column; gap: 0.35rem; }
+.form-groep.vol { grid-column: 1 / -1; }
+
+label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rood-dark);
+}
+
+input, select {
+  background: var(--lichtgrijs);
+  border: 1.5px solid var(--rand);
+  border-radius: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  color: var(--tekst);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--rood);
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+  background: white;
+}
+
+input.fout { border-color: var(--rood-light); background: #fff5f5; }
+input::placeholder { color: #bbb; font-weight: 400; }
+select option { background: white; }
+
+.veld-fout {
+  font-size: 0.75rem;
+  color: var(--rood-light);
+  font-weight: 700;
+  display: none;
+}
+
+/* AFSTAND KEUZE */
+.afstand-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 480px) { .afstand-grid { grid-template-columns: 1fr 1fr; } }
+
+.afstand-kaart {
+  border: 2px solid var(--rand);
+  border-radius: 0.75rem;
+  padding: 1.1rem 0.5rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  background: var(--lichtgrijs);
+  position: relative;
+  user-select: none;
+}
+
+.afstand-kaart:hover {
+  border-color: var(--rood);
+  background: #fdf5f4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(192,57,43,0.12);
+}
+
+.afstand-kaart.gekozen {
+  border-color: var(--rood);
+  background: #fdf5f4;
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.15);
+}
+
+.afstand-kaart.gekozen::after {
+  content: '✓';
+  position: absolute;
+  top: 0.4rem;
+  right: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: var(--rood);
+}
+
+.ak-km {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: var(--rood);
+  line-height: 1;
+}
+
+.ak-lbl {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--grijs);
+}
+
+.ak-prijs {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--tekst);
+  margin-top: 0.5rem;
+}
+
+/* BETAAL SECTIE */
+.betaal-blok {
+  background: #fffbf2;
+  border: 1.5px solid #fde9a0;
+  border-radius: 0.75rem;
+  padding: 1.3rem 1.5rem;
+  display: none;
+  margin-top: 1.2rem;
+}
+
+.betaal-blok.toon { display: block; }
+
+.betaal-blok-kop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.betaal-titel {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--warning);
+}
+
+.betaal-bedrag-groot {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: var(--rood);
+  line-height: 1;
+}
+
+.betaal-bedrag-groot small {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--grijs);
+  letter-spacing: 0.08em;
+  display: block;
+  text-transform: uppercase;
+}
+
+.betaal-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--warning);
+  flex-shrink: 0;
+  animation: knipperen 1.4s ease infinite;
+}
+
+.dot.betaald { background: var(--success); animation: none; }
+
+@keyframes knipperen {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.betaal-knoppen { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* KNOPPEN */
+.knop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.8rem 1.6rem;
+  border: none;
+  border-radius: 0.6rem;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.knop-rood { background: var(--rood); color: white; box-shadow: 0 3px 12px rgba(192,57,43,0.25); }
+.knop-rood:hover { background: var(--rood-dark); transform: translateY(-1px); }
+
+.knop-goud { background: var(--goud); color: var(--donker); box-shadow: 0 3px 10px rgba(240,165,0,0.25); }
+.knop-goud:hover { background: var(--goud-light); transform: translateY(-1px); }
+
+.knop-licht { background: var(--lichtgrijs); color: var(--tekst); border: 1.5px solid var(--rand); }
+.knop-licht:hover { background: #e8e0d8; }
+
+.knop-vol { width: 100%; justify-content: center; }
+
+.knop:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+/* TICKET */
+.ticket-wrap {
+  display: none;
+  animation: omhoog 0.5s ease forwards;
+}
+
+.ticket-wrap.toon { display: block; }
+
+@keyframes omhoog {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ticket {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  border: 1px solid var(--rand);
+}
+
+.ticket-boven {
+  background: linear-gradient(135deg, var(--rood-dark), var(--rood) 60%, var(--rood-light));
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-boven::after {
+  content: '🏃';
+  position: absolute;
+  right: 1rem;
+  bottom: -0.8rem;
+  font-size: 5rem;
+  opacity: 0.08;
+}
+
+.tb-org { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 0.2rem; }
+.tb-naam { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: white; letter-spacing: 0.05em; line-height: 1; }
+.tb-naam span { color: var(--goud-light); }
+
+.ticket-startnr {
+  background: var(--goud);
+  color: var(--donker);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 0.4rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.ticket-startnr small { display: block; font-family: 'Nunito', sans-serif; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; }
+
+.ticket-midden {
+  padding: 1.4rem 1.6rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.2rem;
+  align-items: center;
+}
+
+.t-deelnemer { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; color: var(--donker); letter-spacing: 0.02em; line-height: 1; margin-bottom: 0.8rem; }
+
+.t-details { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; }
+.t-lbl { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--grijs); }
+.t-val { font-size: 0.88rem; font-weight: 700; color: var(--tekst); }
+
+.t-qr { text-align: center; flex-shrink: 0; }
+.t-qr-sub { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grijs); margin-top: 0.4rem; }
+
+.ticket-streep {
+  height: 1px;
+  margin: 0 1.6rem;
+  background: repeating-linear-gradient(to right, transparent 0, transparent 5px, var(--rand) 5px, var(--rand) 9px);
+}
+
+.ticket-onder {
+  background: var(--lichtgrijs);
+  padding: 0.75rem 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.t-id { font-family: monospace; font-size: 0.75rem; color: var(--grijs); letter-spacing: 0.15em; }
+
+.chip {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.7rem;
+  border-radius: 1rem;
+}
+
+.chip-betaald { background: #e6f9ee; color: var(--success); }
+.chip-open { background: #fff4e0; color: var(--warning); }
+
+/* EMAIL FEEDBACK */
+.email-blok {
+  margin-top: 1rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 0.6rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  display: none;
+}
+
+.email-blok.ok { display: block; background: #e6f9ee; color: var(--success); }
+.email-blok.wacht { display: block; background: var(--lichtgrijs); color: var(--grijs); }
+.email-blok.fout { display: block; background: #fff0f0; color: var(--rood); }
+
+/* FOOTER */
+footer {
+  background: var(--donker);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: rgba(255,255,255,0.35);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+footer a:hover { color: var(--goud); }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--donker);
+  color: white;
+  padding: 0.85rem 1.5rem;
+  border-radius: 2rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  white-space: nowrap;
+  border-left: 3px solid var(--goud);
+}
+
+.toast.toon { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* BEVESTIGINGSPAGINA */
+.bevestigd-blok {
+  text-align: center;
+  padding: 2rem 1rem;
+  display: none;
+}
+
+.bevestigd-blok.toon { display: block; }
+
+.check-cirkel {
+  width: 70px;
+  height: 70px;
+  background: var(--success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 1rem;
+  box-shadow: 0 0 0 8px rgba(39,174,96,0.1);
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🏃 Officiële Inschrijving</div>
+    <h1>Sint Lucas<br><span>Doelloop</span></h1>
+    <div class="hero-meta">
+      <div class="hero-meta-item">📅 <strong id="hero-datum">Datum volgt</strong></div>
+      <div class="hero-meta-item">📍 <strong id="hero-locatie">Locatie volgt</strong></div>
+      <div class="hero-meta-item">🕘 <strong id="hero-tijd">Start 09:00</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- AFSTANDEN BAR -->
+<div class="distances-bar">
+  <div class="dist-item"><div class="dist-km">5 KM</div><div class="dist-prijs">€ 5,—</div></div>
+  <div class="dist-item"><div class="dist-km">15 KM</div><div class="dist-prijs">€ 10,—</div></div>
+  <div class="dist-item"><div class="dist-km">40 KM</div><div class="dist-prijs">€ 25,—</div></div>
+  <div class="dist-item"><div class="dist-km">80 KM</div><div class="dist-prijs">€ 40,—</div></div>
+</div>
+
+<!-- PAGINA -->
+<div class="page-wrap">
+
+  <!-- Succes-blok (verborgen tot na inschrijving) -->
+  <div class="bevestigd-blok" id="bevestigd-blok">
+    <div class="check-cirkel">✓</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:0.05em; margin-bottom:0.5rem;">Inschrijving gelukt!</h2>
+    <p style="color:var(--grijs); font-size:0.9rem; margin-bottom:1.5rem;">Bewaar je ticket en QR-code. Tot ziens op de startlijn!</p>
+    <button class="knop knop-licht" onclick="nieuwInschrijving()">+ Nog iemand inschrijven</button>
+  </div>
+
+  <!-- FORMULIER -->
+  <div id="inschrijf-blok">
+
+    <!-- Stap 1: Gegevens -->
+    <div class="kaart" id="kaart-gegevens">
+      <div class="kaart-kop">
+        <span>👤</span>
+        <h2>Jouw gegevens</h2>
+        <span class="stap-lbl">Stap 1 van 3</span>
+      </div>
+      <div class="kaart-body">
+        <div class="form-rij">
+          <div class="form-groep">
+            <label>Voornaam *</label>
+            <input type="text" id="voornaam" placeholder="bijv. Anna" autocomplete="given-name">
+            <span class="veld-fout" id="err-voornaam">Vul je voornaam in</span>
+          </div>
+          <div class="form-groep">
+            <label>Achternaam *</label>
+            <input type="text" id="achternaam" placeholder="bijv. de Vries" autocomplete="family-name">
+            <span class="veld-fout" id="err-achternaam">Vul je achternaam in</span>
+          </div>
+          <div class="form-groep vol">
+            <label>E-mailadres * (voor je ticket)</label>
+            <input type="email" id="email" placeholder="jouw@email.nl" autocomplete="email">
+            <span class="veld-fout" id="err-email">Vul een geldig e-mailadres in</span>
+          </div>
+          <div class="form-groep">
+            <label>Telefoonnummer</label>
+            <input type="tel" id="telefoon" placeholder="06-12345678" autocomplete="tel">
+          </div>
+          <div class="form-groep">
+            <label>Geboortedatum</label>
+            <input type="date" id="geboortedatum">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stap 2: Afstand -->
+    <div class="kaart" id="kaart-afstand">
+      <div class="kaart-kop">
+        <span>🗺️</span>
+        <h2>Kies je afstand</h2>
+        <span class="stap-lbl">Stap 2 van 3</span>
+      </div>
+      <div class="kaart-body">
+        <div class="afstand-grid">
+          <div class="afstand-kaart" onclick="kiesAfstand(this,'5',5)">
+            <div class="ak-km">5</div>
+            <div class="ak-lbl">kilometer</div>
+            <div class="ak-prijs">€ 5,—</div>
+          </div>
+          <div class="afstand-kaart" onclick="kiesAfstand(this,'15',10)">
+            <div class="ak-km">15</div>
+            <div class="ak-lbl">kilometer</div>
+            <div class="ak-prijs">€ 10,—</div>
+          </div>
+          <div class="afstand-kaart" onclick="kiesAfstand(this,'40',25)">
+            <div class="ak-km">40</div>
+            <div class="ak-lbl">kilometer</div>
+            <div class="ak-prijs">€ 25,—</div>
+          </div>
+          <div class="afstand-kaart" onclick="kiesAfstand(this,'80',40)">
+            <div class="ak-km">80</div>
+            <div class="ak-lbl">kilometer</div>
+            <div class="ak-prijs">€ 40,—</div>
+          </div>
+        </div>
+        <span class="veld-fout" id="err-afstand" style="display:none; margin-top:0.5rem;">Kies een afstand</span>
+
+        <!-- Betaalsectie -->
+        <div class="betaal-blok" id="betaal-blok">
+          <div class="betaal-blok-kop">
+            <div>
+              <div class="betaal-titel">💳 Betaling via Tikkie</div>
+            </div>
+            <div class="betaal-bedrag-groot" id="betaal-groot">€ 0,—<small>inschrijfgeld</small></div>
+          </div>
+          <div class="betaal-status">
+            <span class="dot" id="betaal-dot"></span>
+            <span id="betaal-status-txt">Nog niet betaald — open Tikkie om te betalen</span>
+          </div>
+          <div class="betaal-knoppen">
+            <a class="knop knop-goud" id="tikkie-knop" href="#" target="_blank" rel="noopener">📲 Betaal via Tikkie</a>
+            <button class="knop knop-licht" onclick="zetBetaald()">✓ Ik heb betaald</button>
+          </div>
+          <p style="font-size:0.75rem; color:var(--grijs); margin-top:0.8rem; font-style:italic;">
+            Klik op "Betaal via Tikkie", betaal het bedrag, kom terug en klik "Ik heb betaald".
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stap 3: Afronden -->
+    <div class="kaart" id="kaart-afronden">
+      <div class="kaart-kop">
+        <span>🎟️</span>
+        <h2>Inschrijving afronden</h2>
+        <span class="stap-lbl">Stap 3 van 3</span>
+      </div>
+      <div class="kaart-body">
+        <p style="font-size:0.88rem; color:var(--grijs); margin-bottom:1.2rem; line-height:1.6;">
+          Na het klikken op de knop ontvang je direct je ticket met QR-code op het scherm.
+          We sturen ook een bevestiging naar je e-mailadres.
+        </p>
+        <button class="knop knop-rood knop-vol" onclick="schrijfIn()" id="inschrijf-knop">
+          🏃 Schrijf mij in!
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /inschrijf-blok -->
+
+  <!-- TICKET -->
+  <div class="ticket-wrap" id="ticket-wrap">
+    <div class="kaart">
+      <div class="kaart-kop"><span>🎟️</span><h2>Jouw ticket</h2></div>
+      <div class="kaart-body">
+        <div class="ticket" id="ticket-el">
+          <div class="ticket-boven">
+            <div>
+              <div class="tb-org">Sint Lucas Doelloop</div>
+              <div class="tb-naam">DOEL<span>LOOP</span></div>
+            </div>
+            <div class="ticket-startnr"><small>startnr.</small><span id="t-startnr">—</span></div>
+          </div>
+          <div class="ticket-midden">
+            <div>
+              <div class="t-deelnemer" id="t-naam">—</div>
+              <div class="t-details">
+                <div><div class="t-lbl">Afstand</div><div class="t-val" id="t-afstand">—</div></div>
+                <div><div class="t-lbl">Betaling</div><div class="t-val" id="t-betaling">—</div></div>
+                <div><div class="t-lbl">Evenement</div><div class="t-val" id="t-evenement">Sint Lucas Doelloop</div></div>
+                <div><div class="t-lbl">Ticket ID</div><div class="t-val" id="t-id" style="font-family:monospace;font-size:0.82rem;">—</div></div>
+              </div>
+            </div>
+            <div class="t-qr">
+              <div id="qr-container"></div>
+              <div class="t-qr-sub">Scan bij start</div>
+            </div>
+          </div>
+          <div class="ticket-streep"></div>
+          <div class="ticket-onder">
+            <span class="t-id" id="t-id-footer">—</span>
+            <span class="chip" id="t-chip">Open</span>
+          </div>
+        </div>
+
+        <div style="margin-top:1.2rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <button class="knop knop-rood" onclick="stuurBevestiging()" id="email-knop">📧 Stuur mij het ticket per e-mail</button>
+          <button class="knop knop-licht" onclick="window.print()">🖨️ Afdrukken</button>
+        </div>
+        <div class="email-blok" id="email-fb"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<footer>
+  <p>Sint Lucas Doelloop &nbsp;·&nbsp; <a href="beheer.html">Organisatie-login</a></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CONFIG (wordt geladen vanuit beheer.html via localStorage) =====
+function getCfg() { return JSON.parse(localStorage.getItem('sld_cfg') || '{}'); }
+function getInschrijvingen() { return JSON.parse(localStorage.getItem('sld_inschrijvingen') || '[]'); }
+function slaOp(data) { localStorage.setItem('sld_inschrijvingen', JSON.stringify(data)); }
+
+let gekozenAfstand = null;
+let gekozenPrijs = null;
+let heeftBetaald = false;
+let huidigTicket = null;
+
+// Laad hero-info vanuit config
+window.addEventListener('DOMContentLoaded', () => {
+  const cfg = getCfg();
+  if (cfg.datum) {
+    const d = new Date(cfg.datum);
+    document.getElementById('hero-datum').textContent = d.toLocaleDateString('nl-NL', {day:'numeric',month:'long',year:'numeric'});
+  }
+  if (cfg.locatie) document.getElementById('hero-locatie').textContent = cfg.locatie;
+  if (cfg.starttijd) document.getElementById('hero-tijd').textContent = 'Start ' + cfg.starttijd;
+
+  const k = cfg.ejsKey;
+  if (k && k !== 'placeholder') emailjs.init(k);
+});
+
+function kiesAfstand(el, km, prijs) {
+  document.querySelectorAll('.afstand-kaart').forEach(k => k.classList.remove('gekozen'));
+  el.classList.add('gekozen');
+  gekozenAfstand = km;
+  gekozenPrijs = prijs;
+  document.getElementById('err-afstand').style.display = 'none';
+
+  const cfg = getCfg();
+  const tikkieLinks = { '5': cfg.tikkie5, '15': cfg.tikkie15, '40': cfg.tikkie40, '80': cfg.tikkie80 };
+  const link = tikkieLinks[km] || '#';
+
+  const blok = document.getElementById('betaal-blok');
+  blok.classList.add('toon');
+  document.getElementById('betaal-groot').innerHTML = `€ ${prijs},—<small>voor ${km} km</small>`;
+
+  const knop = document.getElementById('tikkie-knop');
+  knop.href = link;
+  if (!link || link === '#') {
+    knop.style.opacity = '0.4';
+    knop.title = 'Tikkie-link wordt binnenkort toegevoegd';
+  } else {
+    knop.style.opacity = '1';
+    knop.removeAttribute('title');
+  }
+
+  heeftBetaald = false;
+  updateBetaalStatus(false);
+}
+
+function updateBetaalStatus(betaald) {
+  heeftBetaald = betaald;
+  document.getElementById('betaal-dot').className = 'dot' + (betaald ? ' betaald' : '');
+  document.getElementById('betaal-status-txt').textContent = betaald
+    ? '✓ Betaling geregistreerd'
+    : 'Nog niet betaald — open Tikkie om te betalen';
+  document.getElementById('betaal-status-txt').style.color = betaald ? 'var(--success)' : 'var(--warning)';
+}
+
+function zetBetaald() {
+  updateBetaalStatus(true);
+  toast('✓ Betaling geregistreerd — vul je gegevens in en rond af!');
+}
+
+function genId() {
+  const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let id = 'SLD-';
+  for (let i = 0; i < 4; i++) id += c[Math.floor(Math.random() * c.length)];
+  return id;
+}
+
+function valideer() {
+  let ok = true;
+  const toon = (id, err) => { document.getElementById(id).style.display = 'block'; document.getElementById(err.replace('err-','')) && (document.getElementById(err.replace('err-','')).classList.add('fout')); };
+  const verberg = (id, veld) => { document.getElementById(id).style.display = 'none'; document.getElementById(veld) && document.getElementById(veld).classList.remove('fout'); };
+
+  const vn = document.getElementById('voornaam').value.trim();
+  const an = document.getElementById('achternaam').value.trim();
+  const em = document.getElementById('email').value.trim();
+
+  if (!vn) { document.getElementById('err-voornaam').style.display='block'; document.getElementById('voornaam').classList.add('fout'); ok=false; }
+  else { document.getElementById('err-voornaam').style.display='none'; document.getElementById('voornaam').classList.remove('fout'); }
+
+  if (!an) { document.getElementById('err-achternaam').style.display='block'; document.getElementById('achternaam').classList.add('fout'); ok=false; }
+  else { document.getElementById('err-achternaam').style.display='none'; document.getElementById('achternaam').classList.remove('fout'); }
+
+  if (!em || !em.includes('@') || !em.includes('.')) { document.getElementById('err-email').style.display='block'; document.getElementById('email').classList.add('fout'); ok=false; }
+  else { document.getElementById('err-email').style.display='none'; document.getElementById('email').classList.remove('fout'); }
+
+  if (!gekozenAfstand) { document.getElementById('err-afstand').style.display='block'; ok=false; }
+  else { document.getElementById('err-afstand').style.display='none'; }
+
+  return ok;
+}
+
+function schrijfIn() {
+  if (!valideer()) {
+    document.getElementById('kaart-gegevens').scrollIntoView({ behavior:'smooth', block:'start' });
+    return;
+  }
+
+  const vn = document.getElementById('voornaam').value.trim();
+  const an = document.getElementById('achternaam').value.trim();
+  const em = document.getElementById('email').value.trim();
+  const cfg = getCfg();
+  const id = genId();
+
+  huidigTicket = {
+    id, voornaam: vn, achternaam: an, email: em,
+    telefoon: document.getElementById('telefoon').value.trim(),
+    geboortedatum: document.getElementById('geboortedatum').value,
+    afstand: gekozenAfstand, prijs: gekozenPrijs,
+    tikkieLink: { '5':cfg.tikkie5,'15':cfg.tikkie15,'40':cfg.tikkie40,'80':cfg.tikkie80 }[gekozenAfstand] || '',
+    betaald: heeftBetaald, checkedin: false, startnr: '',
+    datum: new Date().toLocaleDateString('nl-NL'),
+    timestamp: Date.now()
+  };
+
+  const alle = getInschrijvingen();
+  alle.push(huidigTicket);
+  slaOp(alle);
+
+  // Vul ticket
+  document.getElementById('t-naam').textContent = vn + ' ' + an;
+  document.getElementById('t-afstand').textContent = gekozenAfstand + ' km';
+  document.getElementById('t-id').textContent = id;
+  document.getElementById('t-id-footer').textContent = id;
+  document.getElementById('t-betaling').textContent = heeftBetaald ? 'Betaald ✓' : 'Openstaand';
+  document.getElementById('t-evenement').textContent = cfg.evenementNaam || 'Sint Lucas Doelloop';
+  document.getElementById('t-startnr').textContent = '—';
+
+  const chip = document.getElementById('t-chip');
+  chip.textContent = heeftBetaald ? 'Betaald' : 'Openstaand';
+  chip.className = 'chip ' + (heeftBetaald ? 'chip-betaald' : 'chip-open');
+
+  // QR
+  document.getElementById('qr-container').innerHTML = '';
+  new QRCode(document.getElementById('qr-container'), {
+    text: id, width: 110, height: 110,
+    colorDark: '#1c1a18', colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  document.getElementById('inschrijf-blok').style.display = 'none';
+  document.getElementById('ticket-wrap').classList.add('toon');
+  document.getElementById('bevestigd-blok').classList.add('toon');
+  document.getElementById('ticket-wrap').scrollIntoView({ behavior:'smooth', block:'start' });
+
+  // Automatisch e-mail sturen
+  setTimeout(() => stuurBevestiging(true), 1200);
+}
+
+async function stuurBevestiging(auto = false) {
+  if (!huidigTicket) return;
+  const cfg = getCfg();
+
+  if (!cfg.ejsKey || !cfg.ejsService || !cfg.ejsTemplate) {
+    if (!auto) {
+      const fb = document.getElementById('email-fb');
+      fb.className = 'email-blok fout';
+      fb.textContent = '⚠️ E-mail kon niet worden verstuurd. Sla je ticket op via Afdrukken.';
+    }
+    return;
+  }
+
+  if (!auto) {
+    const fb = document.getElementById('email-fb');
+    fb.className = 'email-blok wacht';
+    fb.textContent = '📧 Bevestiging wordt verstuurd...';
+    document.getElementById('email-knop').disabled = true;
+  }
+
+  const datum = cfg.datum
+    ? new Date(cfg.datum).toLocaleDateString('nl-NL', {day:'numeric', month:'long', year:'numeric'})
+    : 'Zie de evenementpagina';
+
+  try {
+    await emailjs.send(cfg.ejsService, cfg.ejsTemplate, {
+      to_email: huidigTicket.email,
+      reply_to: cfg.orgEmail || '',
+      naam: huidigTicket.voornaam + ' ' + huidigTicket.achternaam,
+      voornaam: huidigTicket.voornaam,
+      ticket_id: huidigTicket.id,
+      afstand: huidigTicket.afstand + ' km',
+      prijs: '€ ' + huidigTicket.prijs + ',—',
+      tikkie_link: huidigTicket.tikkieLink || '—',
+      betaalstatus: huidigTicket.betaald ? 'Betaald ✓' : 'Nog openstaand — betaal via de Tikkie-link',
+      evenement: cfg.evenementNaam || 'Sint Lucas Doelloop',
+      datum, locatie: cfg.locatie || '—',
+      starttijd: cfg.starttijd || '09:00'
+    });
+
+    const fb = document.getElementById('email-fb');
+    fb.className = 'email-blok ok';
+    fb.textContent = '✓ Bevestiging verstuurd naar ' + huidigTicket.email;
+
+    const d = getInschrijvingen();
+    const item = d.find(x => x.id === huidigTicket.id);
+    if (item) { item.emailVerzonden = true; slaOp(d); }
+
+  } catch(e) {
+    const fb = document.getElementById('email-fb');
+    fb.className = 'email-blok fout';
+    fb.textContent = '✗ Versturen mislukt. Druk op Afdrukken om je ticket te bewaren.';
+  }
+
+  document.getElementById('email-knop').disabled = false;
+}
+
+function nieuwInschrijving() {
+  huidigTicket = null; gekozenAfstand = null; gekozenPrijs = null; heeftBetaald = false;
+  ['voornaam','achternaam','email','telefoon','geboortedatum'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('fout'); }
+  });
+  document.querySelectorAll('.afstand-kaart').forEach(k => k.classList.remove('gekozen'));
+  document.getElementById('betaal-blok').classList.remove('toon');
+  document.getElementById('ticket-wrap').classList.remove('toon');
+  document.getElementById('bevestigd-blok').classList.remove('toon');
+  document.getElementById('email-fb').className = 'email-blok';
+  document.getElementById('inschrijf-blok').style.display = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('toon');
+  setTimeout(() => el.classList.remove('toon'), 3200);
+}
+</script>
+</body>
+</html>
